@@ -1,0 +1,20 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+
+
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+env/
+
+# IDE-specific files
+.idea/
+.vscode/
+
+# Logs and temporary files
+*.log
+*.tmp
