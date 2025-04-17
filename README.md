@@ -29,7 +29,7 @@ It supports CSV formats from both OpenGD77 and CHIRP.
 ## Usage
 Run the script using the following command:
    ```bash
-    python chirp-to-opengd77.py [operation] [input_file] [output_file] [start_channel]
+    python opengd77-chirp-csv-coverter.py [operation] [input_file] [output_file] [start_channel]
    ```
 ---
 ## Examples
