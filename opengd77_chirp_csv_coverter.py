@@ -7,6 +7,83 @@ from typing import Callable
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
+# === GD77 FIELD CONSTANTS ===
+CHANNEL_NUMBER = "Channel Number"
+CHANNEL_NAME = "Channel Name"
+CHANNEL_TYPE = "Channel Type"
+RX_FREQUENCY = "Rx Frequency"
+TX_FREQUENCY = "Tx Frequency"
+BANDWIDTH_KHZ = "Bandwidth (kHz)"
+COLOUR_CODE = "Colour Code"
+TIME_SLOT = "Timeslot"
+CONTACT = "Contact"
+TG_LIST = "TG List"
+DMR_ID = "DMR ID"
+TS1_TA_TX = "TS1_TA_Tx"
+TS2_TA_TX_ID = "TS2_TA_Tx ID"
+RX_TONE = "RX Tone"
+TX_TONE = "TX Tone"
+SQUELCH = "Squelch"
+POWER = "Power"
+RX_ONLY = "Rx Only"
+ZONE_SKIP = "Zone Skip"
+ALL_SKIP = "All Skip"
+TOT = "TOT"
+VOX = "VOX"
+NO_BEEP = "No Beep"
+NO_ECO = "No Eco"
+APRS = "APRS"
+LATITUDE = "Latitude"
+LONGITUDE = "Longitude"
+USE_LOCATION = "Use Location"
+
+# === CHIRP FIELD CONSTANTS ===
+LOCATION = "Location"
+NAME = "Name"
+FREQUENCY = "Frequency"
+DUPLEX = "Duplex"
+OFFSET = "Offset"
+TONE = "Tone"
+RTONE_FREQ = "rToneFreq"
+CTONE_FREQ = "cToneFreq"
+DTCS_CODE = "DtcsCode"
+DTCS_POLARITY = "DtcsPolarity"
+RX_DTCS_CODE = "RxDtcsCode"
+CROSS_MODE = "CrossMode"
+MODE = "Mode"
+TSTEP = "TStep"
+SKIP = "Skip"
+COMMENT = "Comment"
+URCALL = "URCALL"
+RPT1CALL = "RPT1CALL"
+RPT2CALL = "RPT2CALL"
+DVCODE = "DVCODE"
+
+# === OTHER CONSTANTS ===
+TONE_TONE = "Tone->Tone"
+ANALOGUE = "Analogue"
+DIGITAL = "Digital"
+DMR = "DMR"
+NFM = "NFM"
+FM = "FM"
+DTCS = "DTCS"
+TONE_STR = "Tone"
+TSQL = "TSQL"
+CROSS = "Cross"
+DTCS_TO_DTCS = "DTCS->DTCS"
+NONE = "None"
+YES = "Yes"
+NO = "No"
+OFF = "Off"
+DISABLED = "Disabled"
+MASTER = "Master"
+P1 = "P1"
+P5 = "P5"
+P6 = "P6"
+P7 = "P7"
+P8 = "P8"
+P9 = "P9"
+
 # Constants
 DEFAULT_GD_INPUT_FILE = 'chirp_to_opengd77_channels.csv'
 DEFAULT_GD_OUTPUT_FILE = 'Channels.csv'
@@ -30,120 +107,85 @@ VALID_OPERATIONS = {
     },
 }
 
-# Constants for repeated literals
-TX_FREQUENCY = "Tx Frequency"
-RX_FREQUENCY = "Rx Frequency"
-CHANNEL_NAME = "Channel Name"
-POWER = "Power"
-ALL_SKIP = "All Skip"
-RX_TONE = "RX Tone"
-TX_TONE = "TX Tone"
-LOCATION = "Location"
-NAME = "Name"
-FREQUENCY = "Frequency"
-DUPLEX = "Duplex"
-OFFSET = "Offset"
-TONE = "Tone"
-RTONE_FREQ = "rToneFreq"
-CTONE_FREQ = "cToneFreq"
-DTCS_CODE = "DtcsCode"
-DTCS_POLARITY = "DtcsPolarity"
-RX_DTCS_CODE = "RxDtcsCode"
-CROSS_MODE = "CrossMode"
-MODE = "Mode"
-SKIP = "Skip"
-COMMENT = "Comment"
-CHANNEL_TYPE = "Channel Type"
-BANDWIDTH_KHZ = "Bandwidth (kHz)"
-TONE_TONE = "Tone->Tone"
-COLOUR_CODE = "Colour Code"
-TIME_SLOT = "Timeslot"
-CONTACT = "Contact"
-TG_LIST = "TG List"
-DMR_ID = "DMR ID"
-CHANNEL_NUMBER = "Channel Number"
-
-
 # Default values for fields not in the input format
 GD77_DEFAULT_VALUES = {
-    CHANNEL_TYPE: "Analogue",
+    CHANNEL_TYPE: ANALOGUE,
     BANDWIDTH_KHZ: "25",
     COLOUR_CODE: "",
     TIME_SLOT: "",
     CONTACT: "",
     TG_LIST: "",
     DMR_ID: "",
-    "TS1_TA_Tx": "",
-    "TS2_TA_Tx ID": "",
-    "RX Tone": "None",
-    "TX Tone": "None",
-    "Squelch": "Disabled",
-    "Power": "Master",
-    "Rx Only": "No",
-    "Zone Skip": "No",
-    "All Skip": "No",
-    "TOT": "0",
-    "VOX": "Off",
-    "No Beep": "No",
-    "No Eco": "No",
-    "APRS": "None",
-    "Latitude": "0.128",
-    "Longitude": "0.008",
-    "Use Location": "No"
+    TS1_TA_TX: "",
+    TS2_TA_TX_ID: "",
+    RX_TONE: NONE,
+    TX_TONE: NONE,
+    SQUELCH: DISABLED,
+    POWER: MASTER,
+    RX_ONLY: NO,
+    ZONE_SKIP: NO,
+    ALL_SKIP: NO,
+    TOT: "0",
+    VOX: OFF,
+    NO_BEEP: NO,
+    NO_ECO: NO,
+    APRS: NONE,
+    LATITUDE: "0.128",
+    LONGITUDE: "0.008",
+    USE_LOCATION: NO
 }
 
 CHIRP_DEFAULT_VALUES = {
-    "TStep": "12.500",
-    "Power": "50W",
-    "Comment": "",
-    "URCALL": "",
-    "RPT1CALL": "",
-    "RPT2CALL": "",
-    "DVCODE": ""
+    TSTEP: "12.500",
+    POWER: "50W",
+    COMMENT: "",
+    URCALL: "",
+    RPT1CALL: "",
+    RPT2CALL: "",
+    DVCODE: ""
 }
 
 GD77_FIELDNAMES = [
     CHANNEL_NUMBER, CHANNEL_NAME, CHANNEL_TYPE, RX_FREQUENCY, TX_FREQUENCY,
-    BANDWIDTH_KHZ, "Colour Code", "Timeslot", "Contact", TG_LIST, DMR_ID,
-    "TS1_TA_Tx", "TS2_TA_Tx ID", RX_TONE, TX_TONE, "Squelch", POWER, "Rx Only",
-    "Zone Skip", ALL_SKIP, "TOT", "VOX", "No Beep", "No Eco", "APRS", "Latitude",
-    "Longitude", "Use Location"
+    BANDWIDTH_KHZ, COLOUR_CODE, TIME_SLOT, CONTACT, TG_LIST, DMR_ID,
+    TS1_TA_TX, TS2_TA_TX_ID, RX_TONE, TX_TONE, SQUELCH, POWER, RX_ONLY,
+    ZONE_SKIP, ALL_SKIP, TOT, VOX, NO_BEEP, NO_ECO, APRS, LATITUDE,
+    LONGITUDE, USE_LOCATION
 ]
 
 CHIRP_FIELDNAMES = [
-    "Location", "Name", "Frequency", "Duplex", "Offset", "Tone", "rToneFreq",
-    "cToneFreq", "DtcsCode", "DtcsPolarity", "RxDtcsCode", "CrossMode", "Mode",
-    "TStep", "Skip", "Power", "Comment", "URCALL", "RPT1CALL", "RPT2CALL",
-    "DVCODE"
+    LOCATION, NAME, FREQUENCY, DUPLEX, OFFSET, TONE, RTONE_FREQ,
+    CTONE_FREQ, DTCS_CODE, DTCS_POLARITY, RX_DTCS_CODE, CROSS_MODE, MODE,
+    TSTEP, SKIP, POWER, COMMENT, URCALL, RPT1CALL, RPT2CALL, DVCODE
 ]
 
 
 # Helper functions
 def calculate_tx_frequency(row):
     """Calculate Tx Frequency based on Duplex and Offset."""
-    if row["Duplex"] == "" or row["Offset"] == "" or abs(float(row["Offset"]) - 0.0) < 1e-9:
-        return row["Frequency"]
-    offset = float(row["Offset"])
-    frequency = float(row["Frequency"])
-    return str(frequency + offset if row["Duplex"] == "+" else frequency - offset)
+    if row[DUPLEX] == "" or row[OFFSET] == "" or abs(float(row[OFFSET]) - 0.0) < 1e-9:
+        return row[FREQUENCY]
+    offset = float(row[OFFSET])
+    frequency = float(row[FREQUENCY])
+    return str(frequency + offset if row[DUPLEX] == "+" else frequency - offset)
 
 
 def calculate_power(row):
-    """Determine Power level based on the value in row['Power']."""
-    power = float(row["Power"].rstrip("W"))
+    """Determine Power level based on the value in row['Power']."""  # docstring can keep 'Power'
+    power = float(row[POWER].rstrip("W"))
     if power < 1.0:
-        return "P1"
+        return P1
     elif 1.0 <= power < 2.0:
-        return "P5"
+        return P5
     elif 2.0 <= power < 3.0:
-        return "P6"
+        return P6
     elif 3.0 <= power < 4.0:
-        return "P7"
+        return P7
     elif 4.0 <= power < 5.0:
-        return "P8"
-    elif row["Power"].rstrip("W") == "5.0":
-        return "P9"
-    return GD77_DEFAULT_VALUES["Power"]
+        return P8
+    elif row[POWER].rstrip("W") == "5.0":
+        return P9
+    return GD77_DEFAULT_VALUES[POWER]
 
 
 def extract_polarity(value):
@@ -157,26 +199,27 @@ def extract_polarity(value):
 
 def calculate_tone(row: Dict[str, Any], tone_type: str) -> str:
     """Calculate RX or TX Tone based on the Tone type."""
-    if row["Tone"] == "DTCS":
-        return f"D{row['DtcsCode']}{extract_polarity(row['DtcsPolarity'])}"
-    elif row["Tone"] == "Tone":
+    if row[TONE] == DTCS:
+        return f"D{row[DTCS_CODE]}{extract_polarity(row[DTCS_POLARITY])}"
+    elif row[TONE] == TONE_STR:
         return row[f"{tone_type}ToneFreq"]
-    elif row["Tone"] == "TSQL":
-        return "None"
-    elif row["Tone"] == "Cross":
-        if row["CrossMode"] == TONE_TONE:
+    elif row[TONE] == TSQL:
+        return NONE
+    elif row[TONE] == CROSS:
+        if row[CROSS_MODE] == TONE_TONE:
             return row[f"{tone_type}ToneFreq"]
         elif tone_type == "r":
-            return f"D{row['RxDtcsCode']}{extract_polarity(row['DtcsPolarity'])}"
+            return f"D{row[RX_DTCS_CODE]}{extract_polarity(row[DTCS_POLARITY])}"
         elif tone_type == "c":
-            return f"D{row['DtcsCode']}{extract_polarity(row['DtcsPolarity'])}"
-    return "None"
+            return f"D{row[DTCS_CODE]}{extract_polarity(row[DTCS_POLARITY])}"
+    return NONE
+
 
 def determine_channel_type(mode):
-    if mode == "DMR":
-        return "Digital"
+    if mode == DMR:
+        return DIGITAL
     else:
-        return "Analogue"
+        return ANALOGUE
     
     
 def transform_row(row: Dict[str, Any], channel_number: int) -> Dict[str, Any]:
@@ -186,14 +229,14 @@ def transform_row(row: Dict[str, Any], channel_number: int) -> Dict[str, Any]:
             **GD77_DEFAULT_VALUES,
             CHANNEL_NUMBER: channel_number,
             CHANNEL_TYPE: determine_channel_type(row[MODE]),
-            CHANNEL_NAME: row["Name"],
-            BANDWIDTH_KHZ: 12.5 if row["Mode"] == "NFM" else 25,
-            RX_FREQUENCY: f"{float(row['Frequency']):.5f}",
+            CHANNEL_NAME: row[NAME],
+            BANDWIDTH_KHZ: 12.5 if row[MODE] == NFM else 25,
+            RX_FREQUENCY: f"{float(row[FREQUENCY]):.5f}",
             TX_FREQUENCY: f"{float(calculate_tx_frequency(row)):.5f}",
             RX_TONE: calculate_tone(row, "r"),
             TX_TONE: calculate_tone(row, "c"),
             POWER: calculate_power(row),
-            ALL_SKIP: "Yes" if row["Skip"] == "S" else GD77_DEFAULT_VALUES[ALL_SKIP]
+            ALL_SKIP: YES if row[SKIP] == "S" else GD77_DEFAULT_VALUES[ALL_SKIP]
         }
     except KeyError as e:
         logging.error(f"Missing key {e} in row: {row}")
@@ -225,20 +268,20 @@ def calculate_offset(tx_frequency, rx_frequency):
 
 def determine_tone(rx_tone, tx_tone):
     """Determine the Tone value."""
-    if rx_tone != "None" and tx_tone != "None" and rx_tone != tx_tone:
-        return "Cross"
+    if rx_tone != NONE and tx_tone != NONE and rx_tone != tx_tone:
+        return CROSS
     if rx_tone.startswith("D") or tx_tone.startswith("D"):
-        return "DTCS"
-    if rx_tone == "None" and tx_tone == "None":
+        return DTCS
+    if rx_tone == NONE and tx_tone == NONE:
         return ""
-    if rx_tone == "None":
-        return "TSQL"
-    return "Tone"
+    if rx_tone == NONE:
+        return TSQL
+    return TONE_STR
 
 
 def calculate_tone_frequency(tone):
     """Calculate the Tone Frequency."""
-    if tone != "None" and tone != "" and not tone.isalnum():
+    if tone != NONE and tone != "" and not tone.isalnum():
         return float(tone)
     return 88.5
 
@@ -262,25 +305,25 @@ def determine_dtcs_polarity(rx_tone, tx_tone):
 def determine_cross_mode(rx_tone, tx_tone):
     """Determine the Cross Mode."""
     if rx_tone.startswith("D") or tx_tone.startswith("D"):
-        return "DTCS->DTCS"
-    if rx_tone != "None" or tx_tone != "None":
+        return DTCS_TO_DTCS
+    if rx_tone != NONE or tx_tone != NONE:
         return TONE_TONE
     return TONE_TONE
 
 
 def determine_mode(bandwidth, channel_type):
     """Determine the Mode based on Bandwidth and Channel Type."""
-    if channel_type == "Digital":
-        return "DMR"
+    if channel_type == DIGITAL:
+        return DMR
     if bandwidth == "12.5":
-        return "NFM"
-    return "FM"
+        return NFM
+    return FM
 
 def determine_chirp_comment(row):
-    if row[CHANNEL_TYPE] == "Digital":
+    if row[CHANNEL_TYPE] == DIGITAL:
         return f"DMR ID: {row[DMR_ID]}, TG List: {row[TG_LIST]}, Colour Code: {row[COLOUR_CODE]}, Timeslot: {row[TIME_SLOT]}, Contact: {row[CONTACT]}"
     else:
-        ""
+        return ""
 
 def transform_chirp_row(row, channel_number):
     """Transform a single row into the target format for CHIRP."""
@@ -299,11 +342,9 @@ def transform_chirp_row(row, channel_number):
         RX_DTCS_CODE: calculate_dtcs_code(row[RX_TONE]),
         CROSS_MODE: determine_cross_mode(row[RX_TONE], row[TX_TONE]),
         MODE: determine_mode(row[BANDWIDTH_KHZ], row[CHANNEL_TYPE]),
-        SKIP: "S" if row[ALL_SKIP] == "Yes" else "",
+        SKIP: "S" if row[ALL_SKIP] == YES else "",
         COMMENT: determine_chirp_comment(row),
     }
-
-
 
 
 def read_input_file(input_file: str):
@@ -353,8 +394,7 @@ def transform_channels(operation, input_file, output_file, start_channel):
         channel_number += 1
 
 
-# Entry point
-if __name__ == "__main__":
+def main():
     # Validate input arguments
     if len(sys.argv) > 5:
         print(
@@ -379,3 +419,7 @@ if __name__ == "__main__":
 
     start_channel = int(sys.argv[4]) if len(sys.argv) > 4 else DEFAULT_START_CHANNEL
     transform_channels(operation, input_file, output_file, start_channel)
+
+
+if __name__ == "__main__":
+    main()
