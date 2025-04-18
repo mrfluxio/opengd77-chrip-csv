@@ -278,24 +278,33 @@ def transform_chirp_row(row, channel_number):
 
 # Main function
 def transform_channels(operation, input_file, output_file, start_channel):
-    with open(input_file, 'r') as infile, open(output_file, 'w', newline='') as outfile:
-        reader = csv.DictReader(infile)
-        writer = csv.DictWriter(outfile, fieldnames=GD77_FIELDNAMES if operation == "gd77" else CHIRP_FIELDNAMES)
-        writer.writeheader()
+    try:
+        with open(input_file, 'r') as infile, open(output_file, 'w', newline='') as outfile:
+            reader = csv.DictReader(infile)
+            writer = csv.DictWriter(outfile, fieldnames=GD77_FIELDNAMES if operation == "gd77" else CHIRP_FIELDNAMES)
+            writer.writeheader()
 
-        channel_number = start_channel + 1 if operation == "gd77" else start_channel
-        for row in reader:
-            try:
-                if operation == "gd77" or row["Channel Type"] == "Analogue":
-                    transformed_row = transform_row(row,
-                                                    channel_number) if operation == "gd77" else transform_chirp_row(
-                        row, channel_number)
-                    writer.writerow(transformed_row)
-                    channel_number += 1
-            except KeyError as e:
-                print(f"Error: Missing key {e} in input row: {row}")
-            except ValueError as e:
-                print(f"Error: Invalid value in row {row}: {e}")
+            channel_number = start_channel + 1 if operation == "gd77" else start_channel
+            for row in reader:
+                try:
+                    if operation == "gd77" or row["Channel Type"] == "Analogue":
+                        transformed_row = (
+                            transform_row(row, channel_number)
+                            if operation == "gd77"
+                            else transform_chirp_row(row, channel_number)
+                        )
+                        writer.writerow(transformed_row)
+                        channel_number += 1
+                except KeyError as e:
+                    raise ValueError(f"Missing key {e} in input row: {row}")
+                except ValueError as e:
+                    raise ValueError(f"Invalid value in row {row}: {e}")
+    except FileNotFoundError as e:
+        raise ValueError(f"File not found: {e.filename}")
+    except PermissionError as e:
+        raise ValueError(f"Permission error: {e}")
+    except Exception as e:
+        raise ValueError(f"An unexpected error occurred: {e}")
 
 
 # Entry point

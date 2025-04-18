@@ -11,6 +11,8 @@ It supports CSV formats from both OpenGD77 and CHIRP.
 
 - Python 3.6 or higher
 - Built-in `csv` module (no additional dependencies required)
+- `wxPython` for the GUI (install using `pip install wxPython`)
+
 
 ---
 
@@ -29,7 +31,7 @@ It supports CSV formats from both OpenGD77 and CHIRP.
 ## Usage
 Run the script using the following command:
    ```bash
-    python opengd77-chirp-csv-coverter.py [operation] [input_file] [output_file] [start_channel]
+    python opengd77_chirp_csv_coverter.py [operation] [input_file] [output_file] [start_channel]
    ```
 ---
 ## Examples
@@ -38,14 +40,14 @@ Convert OpenGD77 CSV to CHIRP format:
 
 Use the `gd77` operation with an OpenGD77 CSV file as input.
    ```bash
-   python opengd77-chirp-csv-coverter.py gd77 chirp_to_opengd77.csv Channels.csv 1
+   python opengd77_chirp_csv_coverter.py gd77 chirp_to_opengd77.csv Channels.csv 1
    ```
 
 Convert CHIRP CSV to OpenGD77 format:
 Use the `chirp` operation with a CHIRP CSV file as input.
 
    ```bash
-   python opengd77-chirp-csv-coverter.py chirp Channels.csv chirp_channels.csv 0
+   python opengd77_chirp_csv_coverter.py chirp Channels.csv chirp_channels.csv 0
    ```
 ---
 ## Parameters
@@ -78,3 +80,23 @@ The program uses the following default file locations for each operation:
   - Default Input File: `Channels.csv`
   - Default Output File: `exported_channels.csv`
 
+---
+
+## Graphical User Interface (GUI)
+You can also use the GUI for a more user-friendly experience.  
+
+1. Run the GUI application:  
+    ```bash
+    python opengd77_chirp_converter_gui.py
+    ```
+
+2. Follow these steps in the GUI:  
+- Select the operation from the dropdown menu:
+  - Transform CHIRP format to OpenGD77
+  - Transform OpenGD77 format to CHIRP
+- Browse and select the input file.
+- Browse and select the output file.
+- Click the Transform button to start the process.
+- Notifications will appear to indicate success or errors.
+
+--
