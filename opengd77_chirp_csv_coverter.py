@@ -2,10 +2,10 @@ import csv
 import logging
 import sys
 from typing import Dict, Any
+from typing import Callable
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-
 
 # Constants
 DEFAULT_GD_INPUT_FILE = 'chirp_to_opengd77_channels.csv'
@@ -56,17 +56,23 @@ COMMENT = "Comment"
 CHANNEL_TYPE = "Channel Type"
 BANDWIDTH_KHZ = "Bandwidth (kHz)"
 TONE_TONE = "Tone->Tone"
+COLOUR_CODE = "Colour Code"
+TIME_SLOT = "Timeslot"
+CONTACT = "Contact"
+TG_LIST = "TG List"
+DMR_ID = "DMR ID"
+CHANNEL_NUMBER = "Channel Number"
 
 
 # Default values for fields not in the input format
-CD_DEFAULT_VALUES = {
+GD77_DEFAULT_VALUES = {
     CHANNEL_TYPE: "Analogue",
     BANDWIDTH_KHZ: "25",
-    "Colour Code": "",
-    "Timeslot": "",
-    "Contact": "",
-    "TG List": "",
-    "DMR ID": "",
+    COLOUR_CODE: "",
+    TIME_SLOT: "",
+    CONTACT: "",
+    TG_LIST: "",
+    DMR_ID: "",
     "TS1_TA_Tx": "",
     "TS2_TA_Tx ID": "",
     "RX Tone": "None",
@@ -97,8 +103,8 @@ CHIRP_DEFAULT_VALUES = {
 }
 
 GD77_FIELDNAMES = [
-    "Channel Number", CHANNEL_NAME, CHANNEL_TYPE, RX_FREQUENCY, TX_FREQUENCY,
-    BANDWIDTH_KHZ, "Colour Code", "Timeslot", "Contact", "TG List", "DMR ID",
+    CHANNEL_NUMBER, CHANNEL_NAME, CHANNEL_TYPE, RX_FREQUENCY, TX_FREQUENCY,
+    BANDWIDTH_KHZ, "Colour Code", "Timeslot", "Contact", TG_LIST, DMR_ID,
     "TS1_TA_Tx", "TS2_TA_Tx ID", RX_TONE, TX_TONE, "Squelch", POWER, "Rx Only",
     "Zone Skip", ALL_SKIP, "TOT", "VOX", "No Beep", "No Eco", "APRS", "Latitude",
     "Longitude", "Use Location"
@@ -137,7 +143,7 @@ def calculate_power(row):
         return "P8"
     elif row["Power"].rstrip("W") == "5.0":
         return "P9"
-    return CD_DEFAULT_VALUES["Power"]
+    return GD77_DEFAULT_VALUES["Power"]
 
 
 def extract_polarity(value):
@@ -166,13 +172,20 @@ def calculate_tone(row: Dict[str, Any], tone_type: str) -> str:
             return f"D{row['DtcsCode']}{extract_polarity(row['DtcsPolarity'])}"
     return "None"
 
-
+def determine_channel_type(mode):
+    if mode == "DMR":
+        return "Digital"
+    else:
+        return "Analogue"
+    
+    
 def transform_row(row: Dict[str, Any], channel_number: int) -> Dict[str, Any]:
     """Transform a single row into the target format."""
     try:
         return {
-            **CD_DEFAULT_VALUES,
-            "Channel Number": channel_number,
+            **GD77_DEFAULT_VALUES,
+            CHANNEL_NUMBER: channel_number,
+            CHANNEL_TYPE: determine_channel_type(row[MODE]),
             CHANNEL_NAME: row["Name"],
             BANDWIDTH_KHZ: 12.5 if row["Mode"] == "NFM" else 25,
             RX_FREQUENCY: f"{float(row['Frequency']):.5f}",
@@ -180,7 +193,7 @@ def transform_row(row: Dict[str, Any], channel_number: int) -> Dict[str, Any]:
             RX_TONE: calculate_tone(row, "r"),
             TX_TONE: calculate_tone(row, "c"),
             POWER: calculate_power(row),
-            ALL_SKIP: "Yes" if row["Skip"] == "S" else CD_DEFAULT_VALUES[ALL_SKIP]
+            ALL_SKIP: "Yes" if row["Skip"] == "S" else GD77_DEFAULT_VALUES[ALL_SKIP]
         }
     except KeyError as e:
         logging.error(f"Missing key {e} in row: {row}")
@@ -225,7 +238,7 @@ def determine_tone(rx_tone, tx_tone):
 
 def calculate_tone_frequency(tone):
     """Calculate the Tone Frequency."""
-    if tone != "None" and not tone.isalnum():
+    if tone != "None" and tone != "" and not tone.isalnum():
         return float(tone)
     return 88.5
 
@@ -255,6 +268,20 @@ def determine_cross_mode(rx_tone, tx_tone):
     return TONE_TONE
 
 
+def determine_mode(bandwidth, channel_type):
+    """Determine the Mode based on Bandwidth and Channel Type."""
+    if channel_type == "Digital":
+        return "DMR"
+    if bandwidth == "12.5":
+        return "NFM"
+    return "FM"
+
+def determine_chirp_comment(row):
+    if row[CHANNEL_TYPE] == "Digital":
+        return f"DMR ID: {row[DMR_ID]}, TG List: {row[TG_LIST]}, Colour Code: {row[COLOUR_CODE]}, Timeslot: {row[TIME_SLOT]}, Contact: {row[CONTACT]}"
+    else:
+        ""
+
 def transform_chirp_row(row, channel_number):
     """Transform a single row into the target format for CHIRP."""
     return {
@@ -271,40 +298,59 @@ def transform_chirp_row(row, channel_number):
         DTCS_POLARITY: determine_dtcs_polarity(row[RX_TONE], row[TX_TONE]),
         RX_DTCS_CODE: calculate_dtcs_code(row[RX_TONE]),
         CROSS_MODE: determine_cross_mode(row[RX_TONE], row[TX_TONE]),
-        MODE: "NFM" if row[BANDWIDTH_KHZ] == "12.5" else "FM",
+        MODE: determine_mode(row[BANDWIDTH_KHZ], row[CHANNEL_TYPE]),
         SKIP: "S" if row[ALL_SKIP] == "Yes" else "",
+        COMMENT: determine_chirp_comment(row),
     }
 
 
-# Main function
-def transform_channels(operation, input_file, output_file, start_channel):
-    try:
-        with open(input_file, 'r') as infile, open(output_file, 'w', newline='') as outfile:
-            reader = csv.DictReader(infile)
-            writer = csv.DictWriter(outfile, fieldnames=GD77_FIELDNAMES if operation == "gd77" else CHIRP_FIELDNAMES)
-            writer.writeheader()
 
-            channel_number = start_channel + 1 if operation == "gd77" else start_channel
-            for row in reader:
-                try:
-                    if operation == "gd77" or row["Channel Type"] == "Analogue":
-                        transformed_row = (
-                            transform_row(row, channel_number)
-                            if operation == "gd77"
-                            else transform_chirp_row(row, channel_number)
-                        )
-                        writer.writerow(transformed_row)
-                        channel_number += 1
-                except KeyError as e:
-                    raise ValueError(f"Missing key {e} in input row: {row}")
-                except ValueError as e:
-                    raise ValueError(f"Invalid value in row {row}: {e}")
+
+def read_input_file(input_file: str):
+    """Read the input CSV file and return a DictReader."""
+    try:
+        return csv.DictReader(open(input_file, 'r'))
     except FileNotFoundError as e:
         raise ValueError(f"File not found: {e.filename}")
     except PermissionError as e:
         raise ValueError(f"Permission error: {e}")
-    except Exception as e:
-        raise ValueError(f"An unexpected error occurred: {e}")
+
+
+def write_output_file(output_file: str, fieldnames: list):
+    """Open the output CSV file and return a DictWriter."""
+    try:
+        outfile = open(output_file, 'w', newline='')
+        writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+        writer.writeheader()
+        return writer
+    except PermissionError as e:
+        raise ValueError(f"Permission error: {e}")
+
+
+def process_row(row: dict, channel_number: int, transform_func: Callable):
+    """Process a single row and return the transformed row."""
+    try:
+        return transform_func(row, channel_number)
+    except KeyError as e:
+        logging.error(f"Missing key {e} in row: {row}")
+        raise
+    except ValueError as e:
+        logging.error(f"Invalid value in row: {row}")
+        raise
+
+
+def transform_channels(operation, input_file, output_file, start_channel):
+    """Transform channels based on the operation."""
+    reader = read_input_file(input_file)
+    writer = write_output_file(output_file, GD77_FIELDNAMES if operation == "gd77" else CHIRP_FIELDNAMES)
+
+    transform_func = transform_row if operation == "gd77" else transform_chirp_row
+    channel_number = start_channel + 1 if operation == "gd77" else start_channel
+
+    for row in reader:
+        transformed_row = process_row(row, channel_number, transform_func)
+        writer.writerow(transformed_row)
+        channel_number += 1
 
 
 # Entry point
@@ -330,6 +376,6 @@ if __name__ == "__main__":
     # Assign input and output files based on arguments or defaults
     input_file = sys.argv[2] if len(sys.argv) > 2 else input_file_default
     output_file = sys.argv[3] if len(sys.argv) > 3 else output_file_default
-    
+
     start_channel = int(sys.argv[4]) if len(sys.argv) > 4 else DEFAULT_START_CHANNEL
     transform_channels(operation, input_file, output_file, start_channel)
