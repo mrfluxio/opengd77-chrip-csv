@@ -4,6 +4,18 @@ This script helps you transform your exported OpenGD77 CSV files into CHIRP form
 
 It supports CSV formats from both OpenGD77 and CHIRP.
 
+---
+
+## Features
+- Transform OpenGD77 CSV files into CHIRP format.
+- Transform CHIRP CSV files into OpenGD77 format.
+- **New:** Support for digital channels (DMR only for now):
+  - In the process from OpenGD77 to CHIRP, DMR details are concatenated in the ` comment`  field.
+  - For the CHIRP to OpenGD77 process, only the `Chanel Type`  is supported for now.
+- **New:** Graphical User Interface (GUI) for a more user-friendly experience:
+  - Easily select operations, input files, and output files.
+  - Perform transformations with a single click.
+  - View notifications for success or errors.
 
 ---
 
