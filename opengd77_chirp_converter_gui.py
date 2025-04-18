@@ -8,6 +8,7 @@ VALID_OPERATIONS = {
 }
 DEFAULT_START_CHANNEL = 0  # Default starting channel
 
+
 class FileConverterApp(wx.Frame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -99,6 +100,7 @@ class FileConverterApp(wx.Frame):
         except Exception as e:
             # Show error notification
             wx.MessageBox(f"An error occurred during transformation:\n{e}", "Error", wx.OK | wx.ICON_ERROR)
+
 
 if __name__ == "__main__":
     app = wx.App(False)
